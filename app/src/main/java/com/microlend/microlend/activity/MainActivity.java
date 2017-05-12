@@ -1,18 +1,26 @@
 package com.microlend.microlend.activity;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -41,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView uname;
 
     private LendAdpter adapter;
+    private int flag = 0;
+    private int lYear, lMonth, lDay;
 
 
     @Override
@@ -64,14 +74,13 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
                 drawerLayout.closeDrawers();
                 switch (item.getItemId()) {
                     case R.id.nav_lend:
-                        // startActivity(new Intent(MainActivity.this, PalnActivity.class));
+                        startActivity(new Intent(MainActivity.this, LendPeopleActivity.class));
                         break;
-                    case R.id.action_settings:
-                        // startActivity(new Intent(MainActivity.this, ResetActivity.class));
+                    case R.id.nav_yearStati:
+                        startActivity(new Intent(MainActivity.this, GraphActivity.class));
                         break;
                 }
                 return true;
@@ -121,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        lendList.clear();
+                        flag = 1;
                         initClassList();
                         adapter.notifyDataSetChanged();
                         swipeRefreshLayout.setRefreshing(false);
@@ -133,27 +142,27 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        MenuItem menuItem = menu.findItem(R.id.action_search);
-//        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-//        searchView.setSubmitButtonEnabled(true);
-//        searchView.setQueryHint("查询课程");
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-////                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-////                Log.w(TAG, "onQueryTextSubmit: query" + query.toString());
-////                intent.putExtra("query", query);
-////                startActivity(intent);
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
+//         Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setQueryHint("按照姓名查询");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                Log.w(TAG, "onQueryTextSubmit: query" + query.toString());
+                intent.putExtra("query", query);
+                startActivity(intent);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         return true;
     }
 
@@ -181,12 +190,12 @@ public class MainActivity extends AppCompatActivity {
 //        int a = KeyEvent.KEYCODE_SEARCH || KeyEvent.KEYCODE_SEARCH;
         switch (event.getKeyCode()) {
             case KeyEvent.KEYCODE_ENTER:
-                // startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
                 Toast.makeText(MainActivity.this, "enter", Toast.LENGTH_SHORT).show();
 
                 break;
             case KeyEvent.KEYCODE_SEARCH:
-                // startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
                 Toast.makeText(MainActivity.this, "search", Toast.LENGTH_SHORT).show();
                 break;
 //            case KeyEvent.
@@ -197,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void initClassList() {
         lendList.clear();
+        getDate();
         List<Lend> cls = DataSupport.findAll(Lend.class);
         int size = cls.size();
         Log.w(TAG, "initClassList: " + size);
@@ -213,9 +223,46 @@ public class MainActivity extends AppCompatActivity {
             mLend.setYear(lend.getYear());
             mLend.setMonth(lend.getMonth());
             mLend.setDay(lend.getDay());
-            Log.w(TAG, "Main: id "+mLend.getId()+"  name "+mLend.getLoadPeopleName()+" money "+lend.getSumMoney() );
+            int mYear = lend.getYear();
+            int mMonth = lend.getMonth();
+            int mDay = lend.getDay();
+            Log.w(TAG, "initClassList: myear " + mYear + " m " + mMonth + " d " + mDay);
+            Log.w(TAG, "initClassList: lYear " + lYear + " lm " + lMonth + " d " + lDay);
+            if ((mYear - lYear) == 0) {
+                if ((mMonth - lMonth - 1) == 0) {
+                    int days = Math.abs(mDay - lDay);
+                    if (days <= 3) {
+                        if (flag == 0) {
+                            sendNotice(days);
+                        }
+                    }
+                }
+            }
+            Log.w(TAG, "Main: id " + mLend.getId() + "  name " + mLend.getLoadPeopleName() + " money " + lend.getSumMoney());
             lendList.add(mLend);
+
         }
-        cls.clear();
+    }
+
+
+    private void sendNotice(int day) {
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Notification notification = new NotificationCompat.Builder(MainActivity.this)
+                .setContentTitle("还款提醒")
+                .setContentText("距离还款还剩" + day + "天")
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_event_available_black_24dp)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_adb_black_24dp))
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .build();
+        manager.notify(1, notification);
+    }
+
+    public void getDate() {
+        Time t = new Time();
+        t.setToNow();
+        lYear = t.year;
+        lMonth = t.month;
+        lDay = t.monthDay;
     }
 }

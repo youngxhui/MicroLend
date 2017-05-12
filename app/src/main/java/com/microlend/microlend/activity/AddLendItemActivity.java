@@ -35,6 +35,8 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
     private Button btn_chooseDate;
     private Button btn_submit;
 
+    private boolean flag;
+
     private int lDay;
     private int lMonth;
     private int lYear;
@@ -87,6 +89,9 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
                         }
                     };
                     DatePickerDialog dialog = new DatePickerDialog(AddLendItemActivity.this, 0, listener, lYear, lMonth, lDay);
+                    if (myear < lYear && mMonth < lMonth && mDay < lDay) {
+                        flag = false;
+                    }
                     dialog.show();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -104,20 +109,26 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
 
 
     private void setInfo() {
-        float money;
+        int f = 0;
+        if (!flag) {
+            f = 1;
+        }
+        float money = 0f;
         if (tv_money.getText().toString().trim().isEmpty()) {
-            return;
+            f = 1;
         } else {
             money = Float.parseFloat(tv_money.getText().toString());
         }
-        float reta;
+        float reta = 0f;
         if (tv_rate.getText().toString().trim().isEmpty()) {
-            return;
+            f = 1;
         } else {
             reta = Float.parseFloat(tv_rate.getText().toString().trim());
         }
-//        Log.w(TAG, "setInfo: month " + month);
-        Log.w(TAG, "setInfo: mo " + money);
+        if (f == 1) {
+            Toast.makeText(AddLendItemActivity.this, "0", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         float sum = Sum.getSum(money, reta, myear, mMonth, lYear, lMonth);
         Lend lend = new Lend();
@@ -162,17 +173,5 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
         Log.w(TAG, "getDate: day" + lDay);
 
     }
-
-//    private float getSum(float money, float reta, int mYear, int mMonth, int lYear, int lMonth) {
-//        int date = 0;
-//        if (mYear > lYear) {
-//            date = (mYear - lYear - 1) * 12 + 12 - lMonth + mMonth;
-//        } else {
-//            date = mMonth - lMonth;
-//        }
-//        Log.w(TAG, "getSum: " + date);
-//        float sum = (float) (money * reta * date * 0.001) + money;
-//        return sum;
-//    }
 
 }

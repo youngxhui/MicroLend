@@ -22,7 +22,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.AddLendItemActivity" />
-        <activity android:name=".activity.LendContentActivity"></activity>
+        <activity android:name=".activity.LendContentActivity" />
+        <activity android:name=".activity.SearchActivity" />
+        <activity
+            android:name=".activity.LendPeopleActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.GraphActivity"></activity>
     </application>
 
 </manifest>

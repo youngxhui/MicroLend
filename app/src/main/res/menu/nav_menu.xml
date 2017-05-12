@@ -4,17 +4,33 @@
         <item
             android:id="@+id/nav_main"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="课程" />
+            android:title="主页" />
         <item
             android:id="@+id/nav_lend"
-            android:icon="@drawable/ic_data_usage_black_24dp"
+            android:icon="@drawable/ic_assignment_ind_black_24dp"
             android:title="借贷人" />
-        <item
-            android:id="@+id/nav_statistics"
-            android:icon="@drawable/ic_data_usage_black_24dp"
-            android:title="接待统计" />
     </group>
-    <group android:checkableBehavior="single">
+
+    <item android:title="借贷统计">
+        <menu>
+            <item
+                android:id="@+id/nav_monthStati"
+                android:icon="@drawable/ic_data_usage_black_24dp"
+                android:title="月统计" />
+            <item
+                android:id="@+id/nav_yearStati"
+                android:icon="@drawable/ic_poll_black_24dp"
+                android:title="年统计" />
+            <item
+                android:id="@+id/nav_peopleStati"
+                android:icon="@drawable/ic_account_circle_black_24dp"
+                android:title="借贷人统计" />
+        </menu>
+    </item>
+
+    <group
+        android:id="@+id/test"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/action_settings"
             android:icon="@drawable/ic_settings_black_24dp"
