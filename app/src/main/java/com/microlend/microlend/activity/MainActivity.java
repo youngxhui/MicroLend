@@ -78,7 +78,13 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(MainActivity.this, LendPeopleActivity.class));
                         break;
                     case R.id.nav_yearStati:
-                        startActivity(new Intent(MainActivity.this, GraphActivity.class));
+                        startActivity(new Intent(MainActivity.this, YearGraphActivity.class));
+                        break;
+                    case R.id.nav_monthStati:
+                        startActivity(new Intent(MainActivity.this, MonthGraphActivity.class));
+                        break;
+                    case R.id.nav_peopleStati:
+                        startActivity(new Intent(MainActivity.this,PersonGraphActivity.class));
                         break;
                     case R.id.action_settings:
                         startActivity(new Intent(MainActivity.this, ResetActivity.class));

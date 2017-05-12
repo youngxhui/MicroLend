@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.microlend.microlend.activity.MonthGraphActivity">
-
-    <lecho.lib.hellocharts.view.LineChartView
-        android:id="@+id/linechart"
+    tools:context="com.microlend.microlend.activity.PersonGraphActivity">
+    <lecho.lib.hellocharts.view.BubbleChartView
+        android:id="@+id/bubblechart"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 </android.support.constraint.ConstraintLayout>

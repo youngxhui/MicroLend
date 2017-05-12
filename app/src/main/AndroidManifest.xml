@@ -30,9 +30,15 @@
         <activity
             android:name=".activity.LendPeopleActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activity.MonthGraphActivity" />
+        <activity android:name=".activity.YearGraphActivity" />
+        <activity android:name=".activity.PersonGraphActivity"></activity>
+
         <activity android:name=".activity.GraphActivity" />
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.ResetActivity" />
+
     </application>
 
 </manifest>
