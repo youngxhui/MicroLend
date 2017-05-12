@@ -2,10 +2,6 @@ package com.microlend.microlend.model;
 
 import org.litepal.crud.DataSupport;
 
-/**
- * Created by young on 2017/5/11.
- */
-
 public class Lend extends DataSupport {
 
     private int id;
@@ -15,11 +11,12 @@ public class Lend extends DataSupport {
     private String loadPeopleIDCard;
     private String telPhone;
     private float rate;
-    private String startDate;
+    private String backDate;
     private int year;
     private int month;
     private int day;
     private String realLoadTime;
+    private boolean back;
 
     public int getId() {
         return id;
@@ -37,13 +34,6 @@ public class Lend extends DataSupport {
         this.money = money;
     }
 
-    public float getSumMoney() {
-        return sumMoney;
-    }
-
-    public void setSumMoney(float sumMoney) {
-        this.sumMoney = sumMoney;
-    }
 
     public String getLoadPeopleName() {
         return loadPeopleName;
@@ -77,13 +67,6 @@ public class Lend extends DataSupport {
         this.rate = rate;
     }
 
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
 
     public String getRealLoadTime() {
         return realLoadTime;
@@ -115,5 +98,30 @@ public class Lend extends DataSupport {
 
     public void setDay(int day) {
         this.day = day;
+    }
+
+
+    public boolean isBack() {
+        return back;
+    }
+
+    public void setBack(boolean back) {
+        this.back = back;
+    }
+
+    public float getSumMoney() {
+        return sumMoney;
+    }
+
+    public void setSumMoney(float sumMoney) {
+        this.sumMoney = sumMoney;
+    }
+
+    public String getBackDate() {
+        return backDate;
+    }
+
+    public void setBackDate(String backDate) {
+        this.backDate = backDate;
     }
 }

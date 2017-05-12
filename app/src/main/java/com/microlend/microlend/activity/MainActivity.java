@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
         }
         navigationView.setCheckedItem(R.id.nav_main);
-//        navigationView.setCheckedItem(R.id.nav_plan);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -87,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_peopleStati:
                         startActivity(new Intent(MainActivity.this,PersonGraphActivity.class));
                         break;
+                    case R.id.action_settings:
+                        startActivity(new Intent(MainActivity.this, ResetActivity.class));
                 }
                 return true;
             }
@@ -229,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
             mLend.setYear(lend.getYear());
             mLend.setMonth(lend.getMonth());
             mLend.setDay(lend.getDay());
+            mLend.setBack(lend.isBack());
+            mLend.setBackDate(lend.getBackDate());
             int mYear = lend.getYear();
             int mMonth = lend.getMonth();
             int mDay = lend.getDay();
@@ -236,9 +239,11 @@ public class MainActivity extends AppCompatActivity {
                 if ((mMonth - lMonth - 1) == 0) {
                     int days = Math.abs(mDay - lDay);
                     if (days <= 3) {
-                        if (flag == 0) {
-                            sendNotice(lend.getLoadPeopleName(),days, n);
-                            n = n + 1;
+                        if (!lend.isBack()) {
+                            if (flag == 0) {
+                                sendNotice(lend.getLoadPeopleName(), days, n);
+                                n = n + 1;
+                            }
                         }
                     }
                 }
@@ -250,11 +255,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void sendNotice(String name,int day, int n) {
+    private void sendNotice(String name, int day, int n) {
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new NotificationCompat.Builder(MainActivity.this)
                 .setContentTitle("还款提醒")
-                .setContentText(name+"距离还款还剩" + day + "天")
+                .setContentText(name + "距离还款还剩" + day + "天")
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.ic_event_available_black_24dp)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_adb_black_24dp))

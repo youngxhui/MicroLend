@@ -62,7 +62,7 @@ public class PeopleAdpter extends RecyclerView.Adapter<PeopleAdpter.ViewHolder> 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
 
                 dialog.setTitle("删除");
-                dialog.setMessage("您确定要删除?");
+                dialog.setMessage("您确定要删除?会把该联系人的贷款信息一同删除");
                 dialog.setCancelable(false);
                 dialog.setPositiveButton("是", new DialogInterface.OnClickListener() {
                     @Override

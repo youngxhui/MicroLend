@@ -9,8 +9,12 @@ import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +28,7 @@ import java.util.List;
 
 public class LendContentActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "LendContentActivity";
     private EditText name;
     private EditText cardID;
     private EditText tel;
@@ -32,10 +37,12 @@ public class LendContentActivity extends AppCompatActivity implements View.OnCli
     private EditText sum;
     private TextView date;
     private Button chooseDate;
+    private RadioButton pass;
     private FloatingActionButton fab_edit;
     private int flag = 0;
     private int id;
-    private int lDay, lYear, lMonth,mYear,mDay,mMonth;
+    private boolean back;
+    private int lDay, lYear, lMonth, mYear, mDay, mMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +53,32 @@ public class LendContentActivity extends AppCompatActivity implements View.OnCli
         Intent intent = getIntent();
         id = intent.getIntExtra("id", -1);
         displayPlan(id);
-
-
         fab_edit.setOnClickListener(this);
+        if (pass.isChecked()) {
+            pass.setText("已还款");
+        }
+        pass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Lend lend = new Lend();
+                if (isChecked) {
+                    getDate();
+                    lend.setBack(isChecked);
+                    pass.setText("已还款");
+                    Log.w(TAG, "onCheckedChanged: " + isChecked);
+                    lend.setBackDate(lYear + "/" + (lMonth+1) + "/" + lDay);
+                } else {
+                    lend.setBack(!isChecked);
+                    pass.setText("未还款");
+
+                }
+                lend.update(id);
+            }
+        });
     }
 
     private void initView() {
+        pass = (RadioButton) findViewById(R.id.rb_back_content);
         name = (EditText) findViewById(R.id.ed_name_content);
         cardID = (EditText) findViewById(R.id.ed_cardid_content);
         tel = (EditText) findViewById(R.id.ed_tel_content);
@@ -78,12 +105,14 @@ public class LendContentActivity extends AppCompatActivity implements View.OnCli
         List<Lend> lendList = DataSupport.where("id=" + id).find(Lend.class);
         for (Lend l : lendList
                 ) {
+            pass.setChecked(l.isBack());
             name.setText(l.getLoadPeopleName());
             cardID.setText(l.getLoadPeopleIDCard());
             tel.setText(l.getTelPhone());
             int year = l.getYear();
             int month = l.getMonth();
             int day = l.getDay();
+
             String retaS = String.valueOf(l.getRate());
             reta.setText(retaS);
             String moneyS = String.valueOf(l.getMoney());
@@ -91,7 +120,6 @@ public class LendContentActivity extends AppCompatActivity implements View.OnCli
             String sumS = String.valueOf(l.getSumMoney());
             sum.setText(sumS);
             date.setText(l.getYear() + "/" + l.getMonth() + "/" + l.getDay());
-
         }
     }
 
@@ -106,16 +134,31 @@ public class LendContentActivity extends AppCompatActivity implements View.OnCli
                     reta.setEnabled(true);
                     tel.setEnabled(true);
                     cardID.setEnabled(true);
+                    pass.setVisibility(View.INVISIBLE);
                     chooseDate.setVisibility(View.VISIBLE);
                     chooseDate.setOnClickListener(this);
                     fab_edit.setImageResource(R.drawable.ic_check_black_24dp);
                     flag = 1;
                 } else {
-                    float mMoney= Float.parseFloat(money.getText().toString());
+                    float mMoney = Float.parseFloat(money.getText().toString());
+                    if (mMoney > 9999999 || mMoney < 0) {
+                        Toast.makeText(LendContentActivity.this, "贷款金额过大或填写金额过小，无法借贷", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     float mReta = Float.parseFloat(reta.getText().toString());
+                    if (mReta < 0 || mReta > 9999999) {
+                        Toast.makeText(LendContentActivity.this, "利率过大或过小，请正确填写", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     float mSun = Sum.getSum(mMoney, mReta, mYear, mMonth, lYear, lMonth);
                     String sumT = String.valueOf(mSun);
                     sum.setText(sumT);
+                    if (name.getText().toString().isEmpty() || tel.getText().toString().isEmpty() || cardID.getText().toString().isEmpty()) {
+                        Toast.makeText(LendContentActivity.this, "填写信息不完整，请正确填写", Toast.LENGTH_SHORT).show();
+
+                        return;
+                    }
+                    pass.setVisibility(View.VISIBLE);
                     name.setEnabled(false);
                     sum.setEnabled(false);
                     money.setEnabled(false);
@@ -125,9 +168,8 @@ public class LendContentActivity extends AppCompatActivity implements View.OnCli
                     chooseDate.setVisibility(View.INVISIBLE);
                     fab_edit.setImageResource(R.drawable.ic_edit_black_24dp);
                     flag = 0;
-                    //
 
-                    Lend lend=new Lend();
+                    Lend lend = new Lend();
                     lend.setLoadPeopleName(name.getText().toString());
                     lend.setLoadPeopleIDCard(cardID.getText().toString());
                     lend.setTelPhone(tel.getText().toString());
@@ -148,8 +190,13 @@ public class LendContentActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onDateSet(DatePicker arg0, int year, int month, int day) {
                             mMonth = month + 1;
-                            mYear=year;
+                            mYear = year;
                             mDay = day;
+                            if (mMonth < lMonth || mDay < lDay || mDay < lDay || (mYear - lYear) > 10) {
+                                Toast.makeText(LendContentActivity.this, "填写日期不正确，或者贷款日期过长",
+                                        Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                             date.setText(year + "/" + mMonth + "/" + day);
                         }
                     };
@@ -159,12 +206,10 @@ public class LendContentActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
                 break;
-
             default:
                 break;
         }
     }
-
 
 
     private void getDate() {
