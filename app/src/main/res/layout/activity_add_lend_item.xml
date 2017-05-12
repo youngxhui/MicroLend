@@ -30,6 +30,7 @@
         tools:layout_editor_absoluteX="8dp">
 
         <EditText
+            android:inputType="number"
             android:id="@+id/tv_lendid_addlend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -104,10 +105,11 @@
         android:id="@+id/textInputLayout2">
 
         <EditText
+            android:inputType="number"
             android:id="@+id/tv_money_addlend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="借贷金额" />
+            android:hint="借贷金额(万元)" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -123,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:hint="利率" />
+            android:hint="月利率(‰)" />
     </android.support.design.widget.TextInputLayout>
 
 </android.support.constraint.ConstraintLayout>

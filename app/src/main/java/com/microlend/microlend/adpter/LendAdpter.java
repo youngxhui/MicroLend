@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ public class LendAdpter extends RecyclerView.Adapter<LendAdpter.ViewHolder> {
         TextView money;
         TextView tel;
         TextView time;
+        ImageView pass;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -51,6 +53,8 @@ public class LendAdpter extends RecyclerView.Adapter<LendAdpter.ViewHolder> {
             money = (TextView) itemView.findViewById(R.id.tv_lendmoney_lenditem);
             tel = (TextView) itemView.findViewById(R.id.tv_tel_lenditem);
             time = (TextView) itemView.findViewById(R.id.tv_time_lenditem);
+            pass = (ImageView) itemView.findViewById(R.id.imgv_pass_lenditem);
+
 
         }
     }
@@ -111,12 +115,17 @@ public class LendAdpter extends RecyclerView.Adapter<LendAdpter.ViewHolder> {
     public void onBindViewHolder(LendAdpter.ViewHolder holder, int position) {
         Lend lend = mLendList.get(position);
         holder.lendName.setText("借贷人姓名：" + lend.getLoadPeopleName());
-        String date = lend.getYear() + "/" + lend.getMonth() + "/" + lend.getDay();
-        holder.time.setText("预计还款日期：" + date);
+
         holder.tel.setText("电话号码：" + lend.getTelPhone());
-        Log.w(TAG, "onBindViewHolder: " + lend.getSumMoney());
+        if (lend.isBack()) {
+            holder.pass.setImageResource(R.drawable.pass);
+            holder.time.setText("实际还款日期：" + lend.getBackDate());
+        } else {
+            holder.pass.setImageResource(R.drawable.nopass);
+            String date = lend.getYear() + "/" + (lend.getMonth()) + "/" + lend.getDay();
+            holder.time.setText("预计还款日期：" + date);
+        }
         String sum = String.valueOf(lend.getSumMoney());
-        Log.w(TAG, "onBindViewHolder: sum " + sum);
         holder.money.setText("总金额：" + sum);
 
     }

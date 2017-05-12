@@ -1,13 +1,9 @@
 package com.microlend.microlend.activity;
 
-import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.icu.util.Calendar;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,8 +16,6 @@ import android.widget.Toast;
 import com.microlend.microlend.R;
 import com.microlend.microlend.model.Lend;
 import com.microlend.microlend.util.Sum;
-
-import org.litepal.crud.DataSupport;
 
 public class AddLendItemActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView tv_lendName;
@@ -66,7 +60,6 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
         tv_tel = (TextView) findViewById(R.id.tv_tel_addlend);
         tv_rate = (TextView) findViewById(R.id.tv_reta_addlend);
         tv_startDate = (TextView) findViewById(R.id.tv_startdate_addlend);
-//        tv_sum = (TextView) findViewById(R.id.tv_sum_addlend);
         btn_chooseDate = (Button) findViewById(R.id.btn_addtime_addlend);
         btn_submit = (Button) findViewById(R.id.btn_submit_addlend);
 
@@ -85,6 +78,11 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
                             mMonth = month + 1;
                             mDay = day;
                             myear = year;
+                            if (mMonth < lMonth || mDay < lDay || mDay < lDay || (myear - lYear) > 10) {
+                                Toast.makeText(AddLendItemActivity.this, "填写日期不正确，或者贷款日期过长",
+                                        Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                             tv_startDate.setText(myear + "/" + mMonth + "/" + day);
                         }
                     };
@@ -110,26 +108,28 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
 
     private void setInfo() {
         int f = 0;
-        if (!flag) {
-            f = 1;
-        }
-        float money = 0f;
-        if (tv_money.getText().toString().trim().isEmpty()) {
+        float money = Float.parseFloat(tv_money.getText().toString().trim());
+        if (money < 0 || money > 9999999) {
             f = 1;
         } else {
             money = Float.parseFloat(tv_money.getText().toString());
         }
-        float reta = 0f;
-        if (tv_rate.getText().toString().trim().isEmpty()) {
+        float reta = Float.parseFloat(tv_rate.getText().toString().trim());
+        if (reta == 0 || reta > 9999999) {
             f = 1;
         } else {
             reta = Float.parseFloat(tv_rate.getText().toString().trim());
         }
-        if (f != 1) {
-            Toast.makeText(AddLendItemActivity.this, "0", Toast.LENGTH_SHORT).show();
+        if (f == 1) {
+            Toast.makeText(AddLendItemActivity.this, "金额或利率过大或者过小，请正确填写", Toast.LENGTH_SHORT)
+                    .show();
             return;
         }
-
+        if (tv_lendName.getText().toString().isEmpty() || tv_tel.getText().toString().isEmpty()
+                || tv_IdCard.getText().toString().isEmpty()) {
+            Toast.makeText(AddLendItemActivity.this, "填写信息不完整，请正确填写", Toast.LENGTH_SHORT).show();
+            return;
+        }
         float sum = Sum.getSum(money, reta, myear, mMonth, lYear, lMonth);
         Lend lend = new Lend();
         lend.setLoadPeopleName(tv_lendName.getText().toString());
@@ -141,9 +141,9 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
         lend.setMonth(mMonth);
         lend.setYear(myear);
         lend.setDay(mDay);
-//        lend.setStartDate(date);
+        lend.setBack(false);
         lend.setSumMoney(sum);
-        Toast.makeText(AddLendItemActivity.this, "利息是：" + sum, Toast.LENGTH_LONG).show();
+        Toast.makeText(AddLendItemActivity.this, "要还款总金额是：" + sum, Toast.LENGTH_LONG).show();
         lend.save();
     }
 
