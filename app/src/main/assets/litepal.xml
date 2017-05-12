@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<litepal>
+    <dbname value="micorlend" />
+    <version value="4" />
+    <list>
+        <mapping class="com.microlend.microlend.model.Lend" />
+    </list>
+</litepal>
