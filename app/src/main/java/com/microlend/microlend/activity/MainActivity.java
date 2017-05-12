@@ -2,7 +2,6 @@ package com.microlend.microlend.activity;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -205,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void initClassList() {
+        int n = 1;
         lendList.clear();
         getDate();
         List<Lend> cls = DataSupport.findAll(Lend.class);
@@ -226,14 +226,13 @@ public class MainActivity extends AppCompatActivity {
             int mYear = lend.getYear();
             int mMonth = lend.getMonth();
             int mDay = lend.getDay();
-            Log.w(TAG, "initClassList: myear " + mYear + " m " + mMonth + " d " + mDay);
-            Log.w(TAG, "initClassList: lYear " + lYear + " lm " + lMonth + " d " + lDay);
             if ((mYear - lYear) == 0) {
                 if ((mMonth - lMonth - 1) == 0) {
                     int days = Math.abs(mDay - lDay);
                     if (days <= 3) {
                         if (flag == 0) {
-                            sendNotice(days);
+                            sendNotice(lend.getLoadPeopleName(),days, n);
+                            n = n + 1;
                         }
                     }
                 }
@@ -245,17 +244,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void sendNotice(int day) {
+    private void sendNotice(String name,int day, int n) {
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new NotificationCompat.Builder(MainActivity.this)
                 .setContentTitle("还款提醒")
-                .setContentText("距离还款还剩" + day + "天")
+                .setContentText(name+"距离还款还剩" + day + "天")
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.ic_event_available_black_24dp)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_adb_black_24dp))
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .build();
-        manager.notify(1, notification);
+        manager.notify(n, notification);
     }
 
     public void getDate() {

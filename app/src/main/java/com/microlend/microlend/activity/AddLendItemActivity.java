@@ -125,7 +125,7 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
         } else {
             reta = Float.parseFloat(tv_rate.getText().toString().trim());
         }
-        if (f == 1) {
+        if (f != 1) {
             Toast.makeText(AddLendItemActivity.this, "0", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -137,7 +137,6 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
         lend.setLoadPeopleIDCard(tv_IdCard.toString());
         lend.setMoney(money);
         lend.setLoadPeopleIDCard(tv_IdCard.getText().toString());
-        String date = tv_startDate.getText().toString();
         lend.setRate(reta);
         lend.setMonth(mMonth);
         lend.setYear(myear);
@@ -145,11 +144,7 @@ public class AddLendItemActivity extends AppCompatActivity implements View.OnCli
 //        lend.setStartDate(date);
         lend.setSumMoney(sum);
         Toast.makeText(AddLendItemActivity.this, "利息是：" + sum, Toast.LENGTH_LONG).show();
-        try {
-            lend.save();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        lend.save();
     }
 
     @Override
