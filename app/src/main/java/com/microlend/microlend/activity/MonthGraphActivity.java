@@ -43,13 +43,15 @@ public class MonthGraphActivity extends AppCompatActivity {
         List<Line> lines = new ArrayList<Line>();
 
         for (int i = 1; i < 13; i++) {
-            List<Lend> cls =DataSupport.select("summoney")
+            List<Lend> cls =DataSupport.select("summoney","back")
                     .where("month=?", String.valueOf(i))
                     .find(Lend.class);
             List<Float> m=new ArrayList<>();
             for (Lend l:cls
                  ) {
-                m.add(l.getSumMoney());
+                if (!l.isBack()){
+                    m.add(l.getSumMoney());
+                }
             }
             values.add(new PointValue(i,sum(m)));
         }

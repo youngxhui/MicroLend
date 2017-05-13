@@ -53,15 +53,16 @@ public class YearGraphActivity extends AppCompatActivity {
 
         List<Float> yearmoney = new ArrayList<Float>();
         for (int i = 2017; i < 2028; i++) {
-            List<Lend> cls = DataSupport.select("summoney")
+            List<Lend> cls = DataSupport.select("summoney","back")
                     .where("year=?", String.valueOf(i))
                     .find(Lend.class);
             List<Float> m = new ArrayList<>();
             for (Lend l : cls
                     ) {
-                m.add(l.getSumMoney());
-
-                Log.w(TAG, "money is "+l.getSumMoney());
+                if (!l.isBack()) {
+                    m.add(l.getSumMoney());
+                    Log.w(TAG, "money is " + l.getSumMoney());
+                }
             }
             yearmoney.add(sum(m));
         }

@@ -17,6 +17,8 @@ import org.litepal.crud.DataSupport;
 import java.util.ArrayList;
 import java.util.List;
 
+import lecho.lib.hellocharts.formatter.BubbleChartValueFormatter;
+import lecho.lib.hellocharts.formatter.SimpleBubbleChartValueFormatter;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.BubbleChartData;
@@ -48,13 +50,15 @@ public class PersonGraphActivity extends AppCompatActivity {
 
         List<AxisValue> axisValues = new ArrayList<AxisValue>();
 
-        List<Lend> cls = DataSupport.select("loadpeoplename","summoney")
+        List<Lend> cls = DataSupport.select("loadpeoplename","summoney","back")
                 .find(Lend.class);
         for (Lend l :
                 cls) {
-            money.add(l.getSumMoney());
-            name.add(l.getLoadPeopleName());
-            Log.w(TAG, "money is: "+l.getSumMoney()+"name is"+l.getLoadPeopleName());
+            if (!l.isBack()){
+                money.add(l.getSumMoney());
+                name.add(l.getLoadPeopleName());
+                Log.w(TAG, "money is: "+l.getSumMoney()+"name is"+l.getLoadPeopleName());
+            }
         }
 
         List<BubbleValue> values=new ArrayList<>();
@@ -66,8 +70,9 @@ public class PersonGraphActivity extends AppCompatActivity {
             axisValues.add(new AxisValue(i, name.get(i).toCharArray()));
         }
 
+        BubbleChartValueFormatter chartValueFormatter=new SimpleBubbleChartValueFormatter(2);
 
-        data=new BubbleChartData(values);
+        data=new BubbleChartData(values).setFormatter(chartValueFormatter);
 
 
 
