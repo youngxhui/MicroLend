@@ -41,7 +41,6 @@ public class YearGraphActivity extends AppCompatActivity {
 
         chart = (ColumnChartView) findViewById(R.id.columnchart);
         chart.setZoomEnabled(true);
-
         int numColumns = 10;
 
         //定义一个圆柱对象集合
@@ -53,7 +52,7 @@ public class YearGraphActivity extends AppCompatActivity {
 
         List<Float> yearmoney = new ArrayList<Float>();
         for (int i = 2017; i < 2028; i++) {
-            List<Lend> cls = DataSupport.select("summoney","back")
+            List<Lend> cls = DataSupport.select("summoney")
                     .where("year=?", String.valueOf(i))
                     .find(Lend.class);
             List<Float> m = new ArrayList<>();
@@ -66,7 +65,6 @@ public class YearGraphActivity extends AppCompatActivity {
             }
             yearmoney.add(sum(m));
         }
-
 
 
         //遍历列数numColumns
